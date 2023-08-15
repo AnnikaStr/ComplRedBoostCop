@@ -37,7 +37,7 @@ data.gen <- function(FAM, Z, i){
   
   if( FAM == "clayton") theta.para <- exp(eta_theta) + 1e-07
   if( FAM == "gumbel") theta.para <- exp(eta_theta) + 1
-  if( FAM %in% c ("normal" , "t")) theta.para <- tanh(eta_theta)              # This might be the problem! other link function!!!!
+  if( FAM %in% c ("normal" , "t")) theta.para <- tanh(eta_theta)         
   if( FAM %in% c ("clayton" , "gumbel") ) Cop <- archmCopula(family = FAM,
                                                              dim = 2, param = theta.para)
   else Cop <- ellipCopula(family = FAM, dim = 2, param = theta.para , df = 4)
@@ -67,7 +67,8 @@ for(i in 1:(n_train + n_eval)){
 
 
 # fit a boosting model
-mod = glmboostLSS(cbind(y1,y2) ~., data = data_train, control = boost_control(mstop = 5000, nu = 0.01, risk = "oobag",trace=T), weights = weights_train, method = 'noncyclic', families = Gauss_Cop(marg1 = "LOGNO", marg2 = "LOGLOG"))
+mod = glmboostLSS(cbind(y1,y2) ~., data = data_train, control = boost_control(mstop = 5000, nu = 0.01,
+                  risk = "oobag",trace=T), weights = weights_train, method = 'noncyclic', families = Gauss_Cop(marg1 = "LOGNO", marg2 = "LOGLOG"))
 
 MSTOP = which.min(risk(mod,merge = T))
 
@@ -75,7 +76,8 @@ oobag.risk = risk(mod,merge = T)
 
 rm(mod) # removed the fist fitted model
 data_train = data_train[weights_train == 1, ]
-mod = glmboostLSS(cbind(y1,y2) ~., data = data_train, control = boost_control(mstop = MSTOP, nu = 0.01), method = 'noncyclic', families = Gauss_Cop(marg1 = "LOGNO",marg2 = "LOGLOG"))
+mod = glmboostLSS(cbind(y1,y2) ~., data = data_train, control = boost_control(mstop = MSTOP, nu = 0.01),
+                  method = 'noncyclic', families = Gauss_Cop(marg1 = "LOGNO",marg2 = "LOGLOG"))
 
 
 
