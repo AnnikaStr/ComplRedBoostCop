@@ -67,8 +67,15 @@ for(i in 1:(n_train + n_eval)){
 
 
 # fit a boosting model
-mod = glmboostLSS(cbind(y1,y2) ~., data = data_train, control = boost_control(mstop = 5000, nu = 0.01,
-                  risk = "oobag",trace=T), weights = weights_train, method = 'noncyclic', families = Gauss_Cop(marg1 = "LOGNO", marg2 = "LOGLOG"))
+mod = glmboostLSS(cbind(y1,y2) ~.,
+                  data = data_train,
+                  control = boost_control(mstop = 5000,
+                                          nu = 0.01,
+                                          risk = "oobag",
+                                          trace=T),
+                  weights = weights_train,
+                  method = 'noncyclic',
+                  families = Gauss_Cop(marg1 = "LOGNO", marg2 = "LOGLOG"))
 
 MSTOP = which.min(risk(mod,merge = T))
 
@@ -76,8 +83,13 @@ oobag.risk = risk(mod,merge = T)
 
 rm(mod) # removed the fist fitted model
 data_train = data_train[weights_train == 1, ]
-mod = glmboostLSS(cbind(y1,y2) ~., data = data_train, control = boost_control(mstop = MSTOP, nu = 0.01),
-                  method = 'noncyclic', families = Gauss_Cop(marg1 = "LOGNO",marg2 = "LOGLOG"))
+
+mod = glmboostLSS(cbind(y1,y2) ~.,
+                  data = data_train,
+                  control = boost_control(mstop = MSTOP,
+                                          nu = 0.01),
+                  method = 'noncyclic',
+                  families = Gauss_Cop(marg1 = "LOGNO",marg2 = "LOGLOG"))
 
 
 
