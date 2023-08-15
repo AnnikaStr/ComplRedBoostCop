@@ -5,10 +5,7 @@ Function for the complexity reduction of boosting distributional copula regressi
 ```r
 library(copula)
 library(gamboostLSS)
-# source Gaussian copula function
-source("Copulas/Copula_Gaussian.R")
-
-set.seed(1)
+source("Copulas/Copula_Gaussian.R") # source Gaussian copula function
 
 n_train = 1000
 n_eval = 1500
@@ -51,37 +48,40 @@ data.gen <- function(FAM, Z, i){
 }
 
 
-
-data_train <- as.data.frame(matrix(0, ncol = p+2+1, nrow=(n_train+n_eval)))
-names(data_train) <- c("y1", "y2", paste0("x", 1:p),'Intercept')
-
-X_train <- matrix(NA, ncol = p, nrow = (n_train+n_eval))
+data_train = as.data.frame(matrix(0, ncol = p+2+1, nrow=(n_train+n_eval)))
+names(data_train) = c("y1", "y2", paste0("x", 1:p),'Intercept')
+X_train = matrix(NA, ncol = p, nrow = (n_train+n_eval))
 
 for(i in 1:p){
-  X_train[,i] <- runif((n_train+n_eval), -1, 1)
+  X_train[,i] = runif((n_train+n_eval), -1, 1)
 }
 
-X_train <- cbind(X_train, 1)
+X_train = cbind(X_train, 1)
 
-weights_train <- c(rep(1, times = n_train), rep(0, times = n_eval))
+weights_train = c(rep(1, times = n_train), rep(0, times = n_eval))
 
 for(i in 1:(n_train + n_eval)){
-  data_run <- data.gen(FAM = "normal", s1 = s1, s2 = s2, s3 = s3, s4 = s4, Z = X_train, i = i)
-  data_train[i, ] <- data_run
+  data_run = data.gen(FAM = "normal", s1 = s1, s2 = s2, s3 = s3, s4 = s4, Z = X_train, i = i)
+  data_train[i, ] = data_run
 }
 
-# fit boosting model
+
+# fit a boosting model
 mod = glmboostLSS(cbind(y1,y2) ~., data = data_train, control = boost_control(mstop = 5000, nu = 0.01, risk = "oobag",trace=T), weights = weights_train, method = 'noncyclic', families = Gauss_Cop(marg1 = "LOGNO", marg2 = "LOGLOG"))
 
-MSTOP <- which.min(risk(mod,merge = T))
+MSTOP = which.min(risk(mod,merge = T))
 
-oobag.risk <- risk(mod,merge = T)
+oobag.risk = risk(mod,merge = T)
 
 rm(mod) # removed the fist fitted model
-data_train <- data_train[weights_train == 1, ]
+data_train = data_train[weights_train == 1, ]
 mod = glmboostLSS(cbind(y1,y2) ~., data = data_train, control = boost_control(mstop = MSTOP, nu = 0.01), method = 'noncyclic', families = Gauss_Cop(marg1 = "LOGNO",marg2 = "LOGLOG"))
 
 
-# Deselection 
+
+## Deselection with a threshold value of 1%
 tau = 0.01
-mod_desel <- DeselectBoostLSS_5(mod, tau = tau, fam = Gauss_Cop(marg1 = "LOGNO",marg2 = "LOGLOG"))
+mod_desel = DeselectBoostLSS_5(mod, tau = tau, fam = Gauss_Cop(marg1 = "LOGNO",marg2 = "LOGLOG"))
+
+
+
