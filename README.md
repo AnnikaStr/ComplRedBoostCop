@@ -61,7 +61,7 @@ X_train = cbind(X_train, 1)
 weights_train = c(rep(1, times = n_train), rep(0, times = n_eval))
 
 for(i in 1:(n_train + n_eval)){
-  data_run = data.gen(FAM = "normal", s1 = s1, s2 = s2, s3 = s3, s4 = s4, Z = X_train, i = i)
+  data_run = data.gen(FAM = "normal", Z = X_train, i = i)
   data_train[i, ] = data_run
 }
 
@@ -95,7 +95,8 @@ mod = glmboostLSS(cbind(y1,y2) ~.,
 
 ## Deselection with a threshold value of 1%
 tau = 0.01
-mod_desel = DeselectBoostLSS_5(mod, tau = tau, fam = Gauss_Cop(marg1 = "LOGNO",marg2 = "LOGLOG"))
+mod_desel =  DeselectBoost(mod, tau =.01, fam = Gauss_Cop(marg1 = "LOGNO",
+                                                          marg2 = "LOGLOG"))
 
 
 
