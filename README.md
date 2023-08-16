@@ -1,5 +1,5 @@
 # Deselection for boosting distributional copula regression
-Function for the complexity reduction of boosting distributional copula regression based on the deselection of base-learner with a negligible impact on the risk reduction.
+Function for complexity reduction of boosting distributional copula regression based on the deselection of base-learner.
 
 # Example
 ```r
