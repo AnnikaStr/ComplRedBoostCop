@@ -29,12 +29,6 @@ data.gen <- function(FAM, Z, i){
   eta_sigma2 <- 2 + 0.5 * z2
   eta_theta  <- 1 + 1 * z4
   
-  eta_mu1    <- -1 * z1 + 0.5 * z3
-  eta_sigma1 <- - - 0.7 * z3
-  eta_mu2    <- - 0.7 - 0.7 * z1 + 0.3 * z2
-  eta_sigma2 <-  0.5 * z2
-  eta_theta  <-  1 * z4
-  
   if( FAM == "clayton") theta.para <- exp(eta_theta) + 1e-07
   if( FAM == "gumbel") theta.para <- exp(eta_theta) + 1
   if( FAM %in% c ("normal" , "t")) theta.para <- tanh(eta_theta)         
