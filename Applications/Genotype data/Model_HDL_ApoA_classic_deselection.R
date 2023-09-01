@@ -2,18 +2,15 @@
 ################################################################
 # ---------- Application genotype data HDL and ApoA  --------- #
 
-library("BatchJobs")
 library("Rcpp")
 library("gamboostLSS")
 library("gamlss.dist")
 library("copula")
-library("scoringRules")
 
 source("defs.R")
 source("Copulas/Copula_Gaussian.R")
 source("Copulas/Copula_Clayton.R")
 source("Copulas/Copula_Gumbel.R")
-source("DeselectBoost_Update.R")
 
 sim <- function(seed){
 
