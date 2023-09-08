@@ -35,17 +35,13 @@ sim <- function(seed){
   probes.test <- data.frame(matrix(0,ncol = dim(test)[2],nrow = n))
   names(probes.test) <- paste(names(test)[-c(1,2)], "probe", sep = "_")
 
-  time_classic = Sys.time()
   mod = glmboostLSS(cbind(LDL_adj,ApoB) ~., data = probes.train, control = boost_control(mstop = 1000, nu = 0.01,trace = T), method = 'noncyclic', families =  Gauss_Cop(marg1 = "LOGLOG", marg2 = "GA", stabilization = "MAD"))
  
-  
   p  = ncol(train)- 2
   if(!any(selected(mod,merge = T) > p)) mod[3000]
   if(!any(selected(mod,merge = T) > p)) mod[5000]
   mstop_probes <- min(which(selected(mod,merge = T) > p   )) - 1 
   mod[mstop_probes]
-  runtime_classic = Sys.time() - time_classic
-  units(runtime_classic) = "mins"
   
   mstop.mod<-  vector('list')
   mstop.mod$mstop <- mstop_probes
