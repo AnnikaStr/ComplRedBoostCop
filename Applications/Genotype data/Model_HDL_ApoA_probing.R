@@ -130,14 +130,6 @@ sim <- function(seed){
   LogLik <- sum(loss(y = test[,c('HDL','ApoA')], mu1 = pred_mu1, mu2 = pred_mu2,
                      sigma1 = pred_sigma1, sigma2 = pred_sigma2, rho = pred_rho),na.rm=T)
   
-  
-  res <- list(mod = mod, Coefficients=Coefficients, mstop=mstop.mod, pred=pred, LogLik_values=LogLik_values, 
-              runtime_classic = runtime_classic, runtime_probing_first = runtime_probing_first)
-  
-  save(res, file = paste0("sims_HDL_ApoA_probing_MAD_",seed,".RData"))
-  rm(res, train, weights_train)
-  gc(reset=T)
-  
   return(list(Coefficients=Coefficients, mstop=mstop.mod, pred=pred, LogLik_values=LogLik_values, LogLik=LogLik))
 }
 
