@@ -2,7 +2,6 @@
 ################################################################
 # ---------- Application genotype data HDL and ApoA  --------- #
 
-library("Rcpp")
 library("gamboostLSS")
 library("gamlss.dist")
 library("copula")
@@ -30,11 +29,9 @@ test = test
 weights_train=weights
 
 set.seed(seed)
-
-time_classic = Sys.time()
+  
 mod = glmboostLSS(cbind(HDL,ApoA)~., data = train, control = boost_control(mstop = 2000, nu = 0.01, risk = "oobag", trace = T), weights = weights_train, method = 'noncyclic', families =  Gauss_Cop(marg1 = "LOGNO", marg2 = "LOGNO", stabilization = "MAD"))
-MSTOP <- which.min(risk(mod,merge = T))# seed = 1, MSTOP = 537
-
+MSTOP <- which.min(risk(mod,merge = T))
 if(MSTOP >= 990){
   mod[2000]
 }
@@ -71,12 +68,10 @@ if(MSTOP >= 6990){
 }
 MSTOP <- which.min(risk(mod,merge = T))
 
-
 if(MSTOP >= 7990){
   mod[9000]
 }
 MSTOP <- which.min(risk(mod,merge = T))
-
 
 if(MSTOP >= 8990){
   mod[10000]
@@ -99,9 +94,6 @@ rm(mod) # removed the fist fitted model
 train <- train[weights_train == 1, ]
 
 mod = glmboostLSS(cbind(HDL,ApoA)~., data = train, control = boost_control(mstop = MSTOP, nu = 0.01, trace = T), method = 'noncyclic', families = Gauss_Cop(marg1 = "LOGNO", marg2 = "LOGNO", stabilization = "MAD"))
-
-runtime_classic = Sys.time() - time_classic
-units(runtime_classic) = "mins"
 
 mstop.mod<-  vector('list')
 mstop.mod$mstop <- MSTOP
@@ -167,8 +159,6 @@ pLogLogistic <- function (x, mu = 1, sigma = 1, log = FALSE){
   ft
 }
 
-
-
 loss <- function (y, mu1, sigma1, mu2, sigma2, rho){
   -(log(dlnorm(x = y[, 1], meanlog = mu1, sdlog = sigma1)) + log(dlnorm(x = y[,  
                                                                             2], meanlog = mu2, sdlog = sigma2)) - 0.5 * log(1 - rho^2) +  
@@ -219,9 +209,7 @@ DeselectBoostLSS_5 <- function(object, data = NULL, fam, tau = NULL, method = c(
   diffRiskRed[[4]] <- diffRiskRed_all[names(diffRiskRed_all)==parameter[[4]]]
   diffRiskRed[[5]] <- diffRiskRed_all[names(diffRiskRed_all)==parameter[[5]]]
   
-  
   Var = lapply(1:length(parameter), function(i){count(select[[i]])[2]})
-
   Risk.Var <- lapply(1:length(parameter),function(i){sapply(1:dim(Var[[i]])[1],function(j){sum(diffRiskRed[[i]][which(count(select[[i]])[[1]][j] == select[[i]])])})})
 
   w.parameter <- c(rep(parameter[1],length(count(select[[1]])[[1]])),rep(parameter[2],length(count(select[[2]])[[1]])),rep(parameter[3],length(count(select[[3]])[[1]])),rep(parameter[4],length(count(select[[4]])[[1]])),rep(parameter[5],length(count(select[[5]])[[1]])))
@@ -251,7 +239,6 @@ DeselectBoostLSS_5 <- function(object, data = NULL, fam, tau = NULL, method = c(
   if(length(name.response) > 1) name.response <- paste("cbind(",paste(name.response, collapse = ","),")")
   
   if(any(RiskRedOver$parameter == parameter[1])){
-    # if(length(name.response) >1) name.response <- paste("cbind(",paste(name.response, collapse = ","),")")
     form1 <- as.formula(paste(name.response, " ~ ", paste(RiskRedOver$VarName[RiskRedOver$parameter == parameter[1]], collapse= "+")))
   }else{  form1 <-  as.formula(paste(name.response, '~1'))}
   
@@ -274,7 +261,6 @@ DeselectBoostLSS_5 <- function(object, data = NULL, fam, tau = NULL, method = c(
   formula <- list(form1,form2,form3,form4,form5)
   names(formula)<- names(object)
   dfbase <- environment(environment(environment(object[[1]][["fitted"]])[["RET"]][["baselearner"]][[1]][["model.frame"]])[["ret"]][["model.frame"]])[["df"]]
-  
   
   if(inherits(object,"nc_mboostLSS")){
     if(inherits(object,"glmboostLSS")){
@@ -299,15 +285,8 @@ DeselectBoostLSS_5 <- function(object, data = NULL, fam, tau = NULL, method = c(
   
   return(out)
 }
-
-
-
-time_desel = Sys.time()
-
+  
 mod_desel <- DeselectBoostLSS_5(mod, tau = tau_1, fam = Gauss_Cop(marg1 = "LOGNO", marg2 = "LOGNO", stabilization = "MAD"))
-
-runtime_desel = Sys.time() - time_desel
-units(runtime_desel) = "mins"
 
 
 Coefficients_desel <- mod_desel$coef
@@ -337,8 +316,8 @@ res <- list(Coefficients=Coefficients_desel, mstop=mstop.mod, pred=pred_desel, L
 save(res, file = paste0("sims_hdl_apoa_desel",seed,".RData"))
 
 
-
-return(list(Coefficients=Coefficients, Coefficients_desel = Coefficients_desel, mstop=mstop.mod, pred=pred, pred_desel=pred_desel, pred_plus=pred_plus, LogLik_values=LogLik_values, LogLik=LogLik, LogLik_desel = LogLik_desel, runtime_classic = runtime_classic, runtime_desel = runtime_desel))
+return(list(Coefficients=Coefficients, Coefficients_desel = Coefficients_desel, mstop=mstop.mod, pred=pred, pred_desel=pred_desel,
+            LogLik_values=LogLik_values, LogLik=LogLik, LogLik_desel = LogLik_desel))
 }
 
 
