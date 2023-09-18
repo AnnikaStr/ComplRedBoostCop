@@ -1,6 +1,6 @@
 # Complexity reduction and enhanced variable selection for boosting distributional copula regression
 
-Example
+## Example
 ```r
 library(copula)
 library(gamboostLSS)
