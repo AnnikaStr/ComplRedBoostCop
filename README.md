@@ -1,4 +1,5 @@
 # Complexity reduction and enhanced variable selection for boosting distributional copula regression
+To reduce model complexity and to enhance variable selection for boosting multivariate distributional copula regression, we have extended probing (Thomas et al.,2017), stability selection (Meinshausen and Bühlmann, 2010), and also a recent deselection approach (Strömer et al., 2022) to this model class. 
 
 ## Example
 ```r
