@@ -89,7 +89,7 @@ mod = glmboostLSS(cbind(y1,y2) ~.,
 
 ## Deselection with a threshold value of 1%
 tau = 0.01
-mod_desel =  DeselectBoost(mod, tau =.01, fam = Gauss_Cop(marg1 = "LOGNO",
+mod_desel =  DeselectBoost(mod, tau = tau, fam = Gauss_Cop(marg1 = "LOGNO",
                                                           marg2 = "LOGLOG"))
 
 
