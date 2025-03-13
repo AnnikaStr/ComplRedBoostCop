@@ -403,7 +403,7 @@ stability <- function(job, data, instance,q){
   
   time = Sys.time()
   mod = gamboostLSS(form, data = train1,
-                    control = boost_control(mstop = 5*nrow(train), nu = 0.01),method = 'noncyclic', families = Clayton_Cop(marg1 = "LOGNO",
+                    control = boost_control(mstop = 5000, nu = 0.01),method = 'noncyclic', families = Clayton_Cop(marg1 = "LOGNO",
                                                                                                                            marg2 = "LOGLOG"))
   
   if(p == 20) pfer = c(1,2.5,5)
