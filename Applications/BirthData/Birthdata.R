@@ -18,94 +18,95 @@ source("Copulas/Copula_Gumbel.R")
 
 
 ### load data
+# load("data_nmv.RData")
+# 
+# 
+# #View(data_nmv)
+# any(is.na(data_nmv))
+# dim(data_nmv)
+# names(data_nmv)
+# summary(data_nmv)
+# 
+# sapply(data_nmv, class)
+# 
+# 
+# # building a subset only including US measurements with a scan-to-delivery interval of 7 days
+# # no Intrauterine fetal deaths (stillbirths) and fetuses with structural anomalies.
+# 
+# data_subset <- data_nmv %>% 
+#   filter(INTERVAL < 8) %>% 
+#   filter(FEHLBILD_new == "nein") %>%
+#   filter(TOTGEBURT_new == "nein")
+# 
+# dim(data_subset)  
+# 
+# #View(data_subset)
+# 
+# # 6103 observations remaining
+# 
+# summary(data_subset)
+# 
+# names(data_subset)
+# 
+# data_subset <- data_subset[, c("GEBLAENGEK", "GEWICHT", 
+#                                "ABDOMEN.SAGITTALDURCHMESSER", "ABDOMEN.TRANSVERSALDURCHMESSE", "ABDOMENUMFANG",
+#                                "BIPARIETALER.DURCHMESSER", "FRONTOOKZIPITALER.DURCHMESSER", "KOPFUMFANG",
+#                                "FEMURLAENGE",
+#                                "ENDGEWICHT", "MUTTERGROESSE", "bmi_mutter","GDiabetis", "GRAVIDA", "PARA",
+#                                "GestAge_Days_US", "GESCHLECHT")]
+# 
+# data_subset
+# dim(data_subset)
+# names(data_subset)
+# 
+# ### scaled Birth weight
+# data_subset["GEWICHT_sca"] <- data_subset["GEWICHT"] / 1000
+# summary(data_subset)
+# 
+# ### interaction terms of the sonograpic variables
+# 
+# data_subset["ABSAG_ABTRAN"] <- data_subset["ABDOMEN.SAGITTALDURCHMESSER"] * data_subset["ABDOMEN.TRANSVERSALDURCHMESSE"]
+# data_subset["ABSAG_ABUMF"] <- data_subset["ABDOMEN.SAGITTALDURCHMESSER"] * data_subset["ABDOMENUMFANG"]
+# data_subset["ABSAG_BIPADU"] <- data_subset["ABDOMEN.SAGITTALDURCHMESSER"] * data_subset["BIPARIETALER.DURCHMESSER"]
+# data_subset["ABSAG_FRODU"] <- data_subset["ABDOMEN.SAGITTALDURCHMESSER"] * data_subset["FRONTOOKZIPITALER.DURCHMESSER"]
+# data_subset["ABSAG_KOPUM"] <- data_subset["ABDOMEN.SAGITTALDURCHMESSER"] * data_subset["KOPFUMFANG"]
+# data_subset["ABSAG_FEMLA"] <- data_subset["ABDOMEN.SAGITTALDURCHMESSER"] * data_subset["FEMURLAENGE"]
+# 
+# data_subset["ABTRAN_ABDUM"] <- data_subset["ABDOMEN.TRANSVERSALDURCHMESSE"] * data_subset["ABDOMENUMFANG"]
+# data_subset["ABTRAN_BIPADU"] <- data_subset["ABDOMEN.TRANSVERSALDURCHMESSE"] * data_subset["BIPARIETALER.DURCHMESSER"]
+# data_subset["ABTRAN_FRONDU"] <- data_subset["ABDOMEN.TRANSVERSALDURCHMESSE"] * data_subset["FRONTOOKZIPITALER.DURCHMESSER"]
+# data_subset["ABTRAN_KOPUM"] <- data_subset["ABDOMEN.TRANSVERSALDURCHMESSE"] * data_subset["KOPFUMFANG"]
+# data_subset["ABTRAN_FEMLA"] <- data_subset["ABDOMEN.TRANSVERSALDURCHMESSE"] * data_subset["FEMURLAENGE"]
+# 
+# data_subset["ABDUM_BIPADU"] <- data_subset["ABDOMENUMFANG"] * data_subset["BIPARIETALER.DURCHMESSER"]
+# data_subset["ABDUM_FRONDU"] <- data_subset["ABDOMENUMFANG"] * data_subset["FRONTOOKZIPITALER.DURCHMESSER"]
+# data_subset["ABD_KOPUM"] <- data_subset["ABDOMENUMFANG"] * data_subset["KOPFUMFANG"]
+# data_subset["ABDUM_FEMLA"] <- data_subset["ABDOMENUMFANG"] * data_subset["FEMURLAENGE"]
+# 
+# data_subset["BIPADU_FRODU"] <- data_subset["BIPARIETALER.DURCHMESSER"] * data_subset["FRONTOOKZIPITALER.DURCHMESSER"]
+# data_subset["BIPADU_KOPUM"] <- data_subset["BIPARIETALER.DURCHMESSER"] * data_subset["KOPFUMFANG"]
+# data_subset["BIPADU_FEMLA"] <- data_subset["BIPARIETALER.DURCHMESSER"] * data_subset["FEMURLAENGE"]
+# 
+# data_subset["FRONDU_KOPUM"] <- data_subset["FRONTOOKZIPITALER.DURCHMESSER"] * data_subset["KOPFUMFANG"]
+# data_subset["FRONDU_FEMLA"] <- data_subset["FRONTOOKZIPITALER.DURCHMESSER"] * data_subset["FEMURLAENGE"]
+# 
+# data_subset["KOPUM_FEMLA"] <- data_subset["KOPFUMFANG"] * data_subset["FEMURLAENGE"]
+# 
+# 
+# dim(data_subset)
+# names(data_subset)
+# summary(data_subset)
+# sapply(data_subset, class)
+# 
+# 
+# ### histograms of the responses
+# hist(data_subset$GEWICHT, breaks = 50)
+# hist(data_subset$GEWICHT_sca, breaks = 50)
+# 
+# hist(data_subset$GEBLAENGEK, breaks = 50)
 
-load("data_nmv.RData")
 
-
-#View(data_nmv)
-any(is.na(data_nmv))
-dim(data_nmv)
-names(data_nmv)
-summary(data_nmv)
-
-sapply(data_nmv, class)
-
-
-# building a subset only including US measurements with a scan-to-delivery interval of 7 days
-# no Intrauterine fetal deaths (stillbirths) and fetuses with structural anomalies.
-
-data_subset <- data_nmv %>% 
-  filter(INTERVAL < 8) %>% 
-  filter(FEHLBILD_new == "nein") %>%
-  filter(TOTGEBURT_new == "nein")
-
-dim(data_subset)  
-
-#View(data_subset)
-
-# 6103 observations remaining
-
-summary(data_subset)
-
-names(data_subset)
-
-data_subset <- data_subset[, c("GEBLAENGEK", "GEWICHT", 
-                               "ABDOMEN.SAGITTALDURCHMESSER", "ABDOMEN.TRANSVERSALDURCHMESSE", "ABDOMENUMFANG",
-                               "BIPARIETALER.DURCHMESSER", "FRONTOOKZIPITALER.DURCHMESSER", "KOPFUMFANG",
-                               "FEMURLAENGE",
-                               "ENDGEWICHT", "MUTTERGROESSE", "bmi_mutter","GDiabetis", "GRAVIDA", "PARA",
-                               "GestAge_Days_US", "GESCHLECHT")]
-
-data_subset
-dim(data_subset)
-names(data_subset)
-
-### scaled Birth weight
-data_subset["GEWICHT_sca"] <- data_subset["GEWICHT"] / 1000
-summary(data_subset)
-
-### interaction terms of the sonograpic variables
-
-data_subset["ABSAG_ABTRAN"] <- data_subset["ABDOMEN.SAGITTALDURCHMESSER"] * data_subset["ABDOMEN.TRANSVERSALDURCHMESSE"]
-data_subset["ABSAG_ABUMF"] <- data_subset["ABDOMEN.SAGITTALDURCHMESSER"] * data_subset["ABDOMENUMFANG"]
-data_subset["ABSAG_BIPADU"] <- data_subset["ABDOMEN.SAGITTALDURCHMESSER"] * data_subset["BIPARIETALER.DURCHMESSER"]
-data_subset["ABSAG_FRODU"] <- data_subset["ABDOMEN.SAGITTALDURCHMESSER"] * data_subset["FRONTOOKZIPITALER.DURCHMESSER"]
-data_subset["ABSAG_KOPUM"] <- data_subset["ABDOMEN.SAGITTALDURCHMESSER"] * data_subset["KOPFUMFANG"]
-data_subset["ABSAG_FEMLA"] <- data_subset["ABDOMEN.SAGITTALDURCHMESSER"] * data_subset["FEMURLAENGE"]
-
-data_subset["ABTRAN_ABDUM"] <- data_subset["ABDOMEN.TRANSVERSALDURCHMESSE"] * data_subset["ABDOMENUMFANG"]
-data_subset["ABTRAN_BIPADU"] <- data_subset["ABDOMEN.TRANSVERSALDURCHMESSE"] * data_subset["BIPARIETALER.DURCHMESSER"]
-data_subset["ABTRAN_FRONDU"] <- data_subset["ABDOMEN.TRANSVERSALDURCHMESSE"] * data_subset["FRONTOOKZIPITALER.DURCHMESSER"]
-data_subset["ABTRAN_KOPUM"] <- data_subset["ABDOMEN.TRANSVERSALDURCHMESSE"] * data_subset["KOPFUMFANG"]
-data_subset["ABTRAN_FEMLA"] <- data_subset["ABDOMEN.TRANSVERSALDURCHMESSE"] * data_subset["FEMURLAENGE"]
-
-data_subset["ABDUM_BIPADU"] <- data_subset["ABDOMENUMFANG"] * data_subset["BIPARIETALER.DURCHMESSER"]
-data_subset["ABDUM_FRONDU"] <- data_subset["ABDOMENUMFANG"] * data_subset["FRONTOOKZIPITALER.DURCHMESSER"]
-data_subset["ABD_KOPUM"] <- data_subset["ABDOMENUMFANG"] * data_subset["KOPFUMFANG"]
-data_subset["ABDUM_FEMLA"] <- data_subset["ABDOMENUMFANG"] * data_subset["FEMURLAENGE"]
-
-data_subset["BIPADU_FRODU"] <- data_subset["BIPARIETALER.DURCHMESSER"] * data_subset["FRONTOOKZIPITALER.DURCHMESSER"]
-data_subset["BIPADU_KOPUM"] <- data_subset["BIPARIETALER.DURCHMESSER"] * data_subset["KOPFUMFANG"]
-data_subset["BIPADU_FEMLA"] <- data_subset["BIPARIETALER.DURCHMESSER"] * data_subset["FEMURLAENGE"]
-
-data_subset["FRONDU_KOPUM"] <- data_subset["FRONTOOKZIPITALER.DURCHMESSER"] * data_subset["KOPFUMFANG"]
-data_subset["FRONDU_FEMLA"] <- data_subset["FRONTOOKZIPITALER.DURCHMESSER"] * data_subset["FEMURLAENGE"]
-
-data_subset["KOPUM_FEMLA"] <- data_subset["KOPFUMFANG"] * data_subset["FEMURLAENGE"]
-
-
-dim(data_subset)
-names(data_subset)
-summary(data_subset)
-sapply(data_subset, class)
-
-
-### histograms of the responses
-hist(data_subset$GEWICHT, breaks = 50)
-hist(data_subset$GEWICHT_sca, breaks = 50)
-
-hist(data_subset$GEBLAENGEK, breaks = 50)
-
+load(noisy_data.RData)
 
 
 
