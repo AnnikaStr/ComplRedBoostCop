@@ -462,7 +462,7 @@ stability <- function(job, data, instance,q){
   
   time = Sys.time()
   mod = glmboostLSS(form, data = train1,
-                    control = boost_control(mstop = 5*nrow(train), nu = 0.01),method = 'noncyclic', families = Gauss_Cop(marg1 = "NO",
+                    control = boost_control(mstop = 5000, nu = 0.01),method = 'noncyclic', families = Gauss_Cop(marg1 = "NO",
                                                                                                                          marg2 = "NO"))
   
   if(p == 200) pfer = c(2.5,5)
